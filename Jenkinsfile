@@ -50,11 +50,7 @@ pipeline {
 
         stage('Review Plan') {
             steps {
-                // Manual approval step before applying the changes
-                input {
-                    message "Please review the Terraform plan. Do you want to apply the changes?"
-                    ok "Apply Changes"
-                }
+                input message 'Please review the Terraform plan. Do you want to apply the changes?', ok 'Apply Changes'
             }
         }
 
