@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/users/ratelimitexceeded/repos"
+  },
+  "response": {
+    "status": 403,
+    "bodyFileName": "get_repos_403.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

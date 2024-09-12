@@ -1,0 +1,4 @@
+app:
+  github:
+    api-url: "http://localhost:${wiremock.server.port}"
+    page-size: 1

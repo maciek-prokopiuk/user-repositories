@@ -1,0 +1,6 @@
+git:5.4.1
+git-client:5.0.0
+credentials:1371.vfee6b_095f0a_3
+github:1.40.0
+blueocean:1.27.14
+terraform:1.0.10

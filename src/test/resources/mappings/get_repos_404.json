@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/users/nonexistentuser/repos"
+  },
+  "response": {
+    "status": 404,
+    "bodyFileName": "get_repos_404.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

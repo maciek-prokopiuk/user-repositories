@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: GitHub Repository API
+  description: API for listing GitHub repositories for a user, excluding forks, and handling specific response formats.
+  version: 1.0.0
+servers:
+  - url: https://localhost
+    description: Maciek's localhost
+tags:
+  - name: repos
+    description: List domain specific data of user repositories.
+paths:
+  /repos/{username}:
+    get:
+      summary: List GitHub repositories for a user
+      description: Retrieve all repositories for a given GitHub user, excluding forks, along with branch and last commit details.
+      tags:
+        - repos
+      operationId: listUserRepositories
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: GitHub username
+          schema:
+            type: string
+        - name: Accept
+          in: header
+          required: true
+          description: Media type to accept in the response (application/json only)
+          schema:
+            type: string
+            enum: [application/json]
+      responses:
+        '200':
+          description: Successful response with repository details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepositoryListResponseDto'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+        '406':
+          description: Unsupported media type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+components:
+  schemas:
+    RepositoryDto:
+      type: object
+      properties:
+        repositoryName:
+          type: string
+          description: Name of the repository
+        ownerLogin:
+          type: string
+          description: Login of the repository owner
+        branches:
+          type: array
+          items:
+            $ref: '#/components/schemas/BranchDto'
+      required:
+        - repositoryName
+        - ownerLogin
+        - branches
+
+    BranchDto:
+      type: object
+      properties:
+        branchName:
+          type: string
+          description: Name of the branch
+        lastCommitSHA:
+          type: string
+          description: SHA of the last commit on the branch
+      required:
+        - branchName
+        - lastCommitSHA
+
+    RepositoryListResponseDto:
+      type: array
+      items:
+        $ref: '#/components/schemas/RepositoryDto'
+
+    ErrorResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP response code
+          example: 404
+        message:
+          type: string
+          description: Reason for the error
+          example: "User not found"
+      required:
+        - status
+        - message

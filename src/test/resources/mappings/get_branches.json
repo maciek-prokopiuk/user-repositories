@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/repos/maciek-prokopiuk/.*/branches\\?per_page=1"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "get_branches_200.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

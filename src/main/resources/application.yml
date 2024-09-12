@@ -1,0 +1,15 @@
+app:
+  github:
+    api-url: "https://api.github.com"
+    concurrency-level: ${APP_CONCURRENCY_LEVEL:10}
+    page-size: ${APP_PAGE_SIZE:100}
+    api-token: ${APP_GITHUB_API_TOKEN:}
+
+
+management:
+  endpoints:
+    web.exposure.include: "*"
+
+spring:
+  main:
+    web-application-type: reactive

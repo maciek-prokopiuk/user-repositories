@@ -1,0 +1,70 @@
+sourceSets {
+	main {
+		java {
+			srcDir 'build/generated/sources/src/main/java'
+		}
+	}
+}
+
+apply plugin: 'org.openapi.generator'
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "$rootDir/src/main/resources/api.yml"
+	outputDir = "$buildDir/generated/sources"
+	modelPackage = "com.maciejprokopiuk.app.controllers.models"
+//	modelNameSuffix = "Dto"
+	apiPackage = "com.maciejprokopiuk.app.controllers"
+//	invokerPackage = "com.maciejprokopiuk.app.client.invoker"
+	configOptions = [
+		dateLibrary: "java8",
+		interfaceOnly: "true", // This tells the generator to not create an entire Spring application. It will generate only interfaces for controllers
+		serializationLibrary: "jackson",
+		library: "spring-boot",
+		additionalModelTypeAnnotations: "@lombok.NoArgsConstructor @lombok.AllArgsConstructor @lombok.Generated",
+		openApiNullable: "false", // don't include https://github.com/OpenAPITools/jackson-databind-nullable dependency,
+		useSpringBoot3: "true",
+			reactive: "true"
+	]
+	additionalProperties = [
+		useSpringfox: false
+	]
+	typeMappings = [
+		OffsetDateTime: 'java.time.ZonedDateTime'
+	]
+	generateModelTests = true
+	generateModelDocumentation = true
+	generateApiTests = true
+	generateApiDocumentation = true
+}
+
+task openApiGenerateGithub(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+	generatorName = "spring"
+	inputSpec = "$rootDir/src/main/resources/ghes-3.0.yml"
+	outputDir = "$buildDir/generated/sources"
+	modelPackage = "com.maciejprokopiuk.github.controllers.models"
+	modelNameSuffix = "Dto"
+	apiPackage = "com.maciejprokopiuk.github.controllers"
+	invokerPackage = "com.maciejprokopiuk.github.client.invoker"
+	configOptions = [
+			dateLibrary: "java8",
+			interfaceOnly: "true", // This tells the generator to not create an entire Spring application. It will generate only interfaces for controllers
+			serializationLibrary: "jackson",
+			library: "spring-boot",
+			additionalModelTypeAnnotations: "@lombok.NoArgsConstructor @lombok.AllArgsConstructor @lombok.Generated",
+			openApiNullable: "false", // don't include https://github.com/OpenAPITools/jackson-databind-nullable dependency,
+			useSpringBoot3: "true",
+			reactive: "true"
+	]
+	additionalProperties = [
+			useSpringfox: false
+	]
+	typeMappings = [
+			OffsetDateTime: 'java.time.ZonedDateTime'
+	]
+}
+
+tasks.compileJava.dependsOn {
+	tasks.openApiGenerate
+	tasks.openApiGenerateGithub
+}

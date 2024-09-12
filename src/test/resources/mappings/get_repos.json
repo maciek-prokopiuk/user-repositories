@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/users/maciek-prokopiuk/repos"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "get_repos_200.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
