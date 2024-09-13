@@ -13,22 +13,33 @@ RUN apt-get update && \
     gnupg-agent \
     software-properties-common lsb-release
 
-# Add Docker’s official GPG key and set up the repository for Debian
+# Add Docker’s official GPG key and set up the Docker CE repository for Debian
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
     add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+    "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
 
-# Install Docker (use docker.io if docker-ce is unavailable)
+# Install Docker CE (Community Edition)
 RUN apt-get update && \
-    apt-get install -y docker.io && \
+    apt-get install -y docker-ce docker-ce-cli containerd.io && \
     usermod -aG docker jenkins
 
-# Install AWS CLI v2
+RUN docker buildx version
+
+ENV DOCKER_CLI_EXPERIMENTAL=enabled
+
+# Install AWS CLI v2 for ARM64
 RUN apt-get install -y unzip && \
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
     ./aws/install --update && \
     rm -rf awscliv2.zip aws
+
+# Install Terraform
+RUN curl -o terraform.zip https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip && \
+    unzip terraform.zip && \
+    mv terraform /usr/local/bin/ && \
+    terraform -version && \
+    rm terraform.zip
 
 # Switch back to Jenkins user
 USER jenkins

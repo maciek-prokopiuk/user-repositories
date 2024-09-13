@@ -7,6 +7,7 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('aws_key_id')
         ACCOUNT_ID = '698059809282'
         ECR_REPO = "${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/my-ecr-repo"
+        ECR_REPO_BASE = "${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
         ECS_CLUSTER = 'my-ecs-cluster'
         ECS_SERVICE = 'my-ecs-service'
         DOCKER_IMAGE = "${ECR_REPO}:latest"
@@ -70,7 +71,7 @@ pipeline {
             steps {
                 sh '''
                 docker logout ${ECR_REPO} || true
-                aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
+                aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPO_BASE}
                 '''
             }
         }

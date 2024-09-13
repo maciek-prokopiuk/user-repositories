@@ -9,6 +9,8 @@ The service is built using hexagonal architecture, which ensures a clear separat
 
 Additionally, there are the `infra` and `docker` packages. `infra` containing Terraform scripts for setting up the infrastructure, including ECS clusters, task definitions, ECR, API Gateway, and other resources necessary for deploying the service on AWS. `docker` with files required to run Jenkins locally.
 
+In `docs` you can see short demo of the final step of building and deploying the application using Jenkins pipeline and Terraform scripts.
+
 ## Features
 
 * Api First Design
@@ -82,7 +84,7 @@ Example:
 docker run -p 8080:8080 user-repositories-service  -e APP_GITHUB_API_TOKEN='your_token'
 ```
 
-Note that the application only retrieves **public repositories** for the specified username (if the user exists). The GitHub API returns private repositories for authenticated users via a different endpoint (`/user/repos`), not the one used in this service (`users/{username}/repos`). To access private repositories, a Bearer token would need to be included in the request header and forwarded to the GitHub API. In such a scenario, the `/repos/{username}` endpoint would not be appropriate.
+**Note** The application only retrieves **public repositories** for the specified username (if the user exists). The GitHub API returns private repositories for authenticated users via a different endpoint (`/user/repos`), not the one used in this service (`users/{username}/repos`). To access private repositories, a Bearer token would need to be included in the request header and forwarded to the GitHub API. In such a scenario, the `/repos/{username}` endpoint would not be appropriate.
 
 Example curl request:
 ```shell
@@ -116,6 +118,8 @@ Error response model:
 
 ### Infrastructure
 Infrastructure is managed using Terraform scripts located in the `infra` directory. These scripts create the ECS cluster, task definition, ECR, API Gateway, and other necessary AWS resources. The infrastructure is built on a default VPC with public subnets. In a production environment, it would be better to create a dedicated VPC for better resource isolation.
+
+**Note:** Terraform state is kept locally for simplicity. In a production environment, it should be stored remotely (e.g., S3 bucket) to allow for collaboration and state locking. Due to this fact it is not recommended to run terraform scripts from multiple machines. 
 
 To set up the AWS environment:
 1. Set up AWS credentials:
@@ -159,10 +163,14 @@ Prerequisites:
 Jenkins pipeline is defined in `Jenkinsfile`. It setup the infrastructure, builds the application, runs tests, builds docker image and pushes it to ECR. Then it forces new deployment. 
 API gateway url is returned from terraform output and can be checked in Jenkins console or using AWS Console. 
 
-**Note:** Jenkins pipeline presents a simple example of how the CI/CD pipeline could be set up. In a production environment, more things should be considered, such as security scanning, secrets management, monitoring, smoke tests, blue/gree deployments etc.
+**Note:** Jenkins pipeline presents a simple example of how the CI/CD pipeline could be set up. 
+In a production environment, more things should be considered, such as security scanning, secrets management, monitoring, smoke tests, blue/gree deployments etc.
+Also it is worth mentioning that setting up infrastructure and deploying application in the same pipeline is not recommended. It is better to have separate pipelines for infrastructure and application deployment for better separation of concerns.
 
 ### Running Jenkins locally
 To play with Jenkins locally you can use docker-compose file located in the `docker` directory.
+
+**Note:** This setup is meant to be used on ARM64 architecture. If you are using x86_64 architecture you need to change versions of the tools in the Dockerfile
 ```shell
 cd docker
 docker-compose up -d 
